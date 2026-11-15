@@ -1,0 +1,55 @@
+# Dependencies are reinstalled with npm ci, including in subprojects.
+node_modules/
+
+# Private environment values; keep the distributable configuration template.
+.env
+.env.*
+!.env.example
+
+# Machine-specific runtimes, actual MySQL data, credentials and backups.
+/work/
+/sec2_gr8_ws_src/work/
+
+# Shop uploads and customer payment slips are local data, not source assets.
+**/public/images/uploads/
+
+# Browser evidence captured from the actual shop; demo test evidence stays tracked.
+/tools/evidence/phase2/live/
+
+# Superseded app copies and delivery archives; retain the original reference text.
+/archive/*
+!/archive/README.md
+!/archive/history/
+/archive/history/*
+!/archive/history/webproject.txt
+/deliverables/
+/submission/
+/sec2_gr8_submission.zip
+
+# Generated caches, logs, browser traces and editor/Office temporary files.
+*.log
+*.tmp
+*.bak
+*.swp
+~$*
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.venv/
+.cache/
+coverage/
+playwright-report/
+test-results/
+
+# Private keys and certificates.
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Intentionally tracked: docs (MD/Word/PDF/HTML/Postman), SQL demo and migrations,
+# package locks, frontend assets, tools/scripts, tools/tests and demo evidence.
+
+# Locally saved terminal output.
+/ssss

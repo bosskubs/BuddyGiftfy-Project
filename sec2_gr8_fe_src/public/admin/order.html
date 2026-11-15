@@ -1,0 +1,896 @@
+<!doctype html>
+<!-- Render order details and the payment or fulfillment actions available to staff. -->
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#fff9f6" />
+    <meta
+      name="description"
+      content="BuddyGiftfy ร้านของขวัญที่เลือกด้วยใจ พร้อมบริการห่อของขวัญและเขียนการ์ดแทนความรู้สึก"
+    />
+    <title>รายละเอียดคำสั่งซื้อ · BuddyGiftfy</title>
+    <link rel="icon" href="/images/optimized/49794cc38e9a86-480.webp" />
+    <link rel="stylesheet" href="/fonts.css" />
+    <link rel="stylesheet" href="/modern.css" />
+    <script src="/config.js" defer=""></script>
+  </head>
+  <body
+    class="admin-body"
+    data-page="admin-order"
+    data-access="operations"
+    data-endpoint="/api/admin/orders/:id"
+  >
+    <a class="skip-link" href="#main">ข้ามไปเนื้อหา</a>
+    <header class="admin-header">
+      <button
+        class="icon-button admin-menu-toggle"
+        data-menu-toggle=""
+        aria-controls="admin-nav"
+        aria-expanded="false"
+        aria-label="เปิดเมนูผู้ดูแล"
+        type="submit"
+      >
+        <svg
+          class="icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg></button
+      ><a class="brand" href="/admin"
+        ><img
+          src="/images/optimized/e19ef2d6e0b5fb-480.webp"
+          alt="BuddyGiftfy"
+          width="64"
+          height="64"
+        /><span>BuddyGiftfy<small>พื้นที่ดูแลร้าน</small></span></a
+      ><a class="btn btn-small btn-outline" href="/"
+        ><svg
+          class="icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 12h16m-6-6 6 6-6 6"></path></svg
+        >ดูหน้าร้าน</a
+      ><a class="admin-identity" href="/admin/profile"
+        ><span class="avatar">T</span
+        ><span
+          ><span data-bind="account.first_name">—</span
+          ><small>Owner</small></span
+        ></a
+      >
+    </header>
+    <div class="admin-shell">
+      <aside id="admin-nav" class="admin-side">
+        <span class="nav-caption">ดูแลทุกความรู้สึกดี ๆ</span>
+        <nav aria-label="เมนูผู้ดูแล">
+          <a href="/admin" data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1"></rect></svg
+            >ภาพรวมร้าน</a
+          ><a href="/admin/products"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="m12 2 9 5v10l-9 5-9-5V7l9-5ZM3 7l9 5 9-5M12 12v10M7 4.8l9 5"
+              ></path></svg
+            >สินค้า</a
+          ><a href="/admin/categories" data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1"></rect></svg
+            >หมวดหมู่</a
+          ><a
+            href="/admin/orders"
+            aria-current="page"
+            data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 3h12v19l-3-2-3 2-3-2-3 2V3Z"></path>
+              <path d="M9 8h6M9 12h6M9 16h3"></path></svg
+            >คำสั่งซื้อ</a
+          ><a href="/admin/payments" data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"></path>
+              <path d="m8 12 3 3 5-5"></path></svg
+            >ตรวจสอบการชำระเงิน</a
+          ><a href="/admin/customers" data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg
+            >ลูกค้า</a
+          ><a href="/admin/messages" data-roles="Owner,Manager"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <path d="m3 6 9 7 9-7"></path></svg
+            >ข้อความจากลูกค้า</a
+          ><a href="/admin/accounts" data-roles="Owner"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg
+            >ทีมผู้ดูแล</a
+          ><a href="/admin/settings" data-roles="Owner"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="m9 3-1 3-3 1v4l-2 1 2 3v3l3 1 1 3h6l1-3 3-1v-3l2-3-2-1V7l-3-1-1-3H9Z"
+              ></path>
+              <circle cx="12" cy="12" r="3"></circle></svg
+            >ตั้งค่าร้าน</a
+          ><a href="/admin/profile"
+            ><svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path></svg
+            >บัญชีของฉัน</a
+          >
+        </nav>
+        <form
+          method="post"
+          action="/api/admin/logout"
+          data-method="POST"
+          data-wait-for-session=""
+        >
+          <input
+            type="hidden"
+            name="_csrf"
+            value=""
+            data-bind-value="{{session.csrf}}"
+          /><button
+            class="sidebar-logout"
+            disabled=""
+            data-session-lock=""
+            type="submit"
+          >
+            <svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M10 4H4v16h6m4-14 6 6-6 6M8 12h12"></path></svg
+            >ออกจากระบบ
+          </button>
+        </form>
+      </aside>
+      <!-- Main page content; data-* hooks connect this markup to its controller. -->
+      <main id="main" class="admin-main">
+        <p class="muted page-data-status" data-page-status="" role="status">
+          กำลังโหลดข้อมูล…
+        </p>
+        <div
+          class="flash notice notice-error"
+          data-page-error=""
+          role="alert"
+          hidden=""
+        ></div>
+        <div class="order-page">
+          <div class="page-title">
+            <div>
+              <span class="eyebrow">ORDER WORKSPACE</span>
+              <h1>คำสั่งซื้อ <span data-bind="order.order_number">—</span></h1>
+              <p><span data-bind="order.created_at|date">—</span></p>
+            </div>
+            <a class="btn btn-text" href="/admin/orders"
+              >คำสั่งซื้อทั้งหมด</a
+            >
+          </div>
+          <div class="order-status-banner">
+            <svg
+              class="icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l4 2"></path>
+            </svg>
+            <div>
+              <h2>ได้รับสลิปแล้ว กำลังรอร้านตรวจสอบ</h2>
+              <p>คุณสามารถติดตามผลการตรวจสอบได้ในหน้านี้</p>
+            </div>
+            <span class="status status-pending">รอตรวจสอบสลิป</span>
+          </div>
+          <ol class="order-timeline">
+            <li class="reached" aria-current="step">
+              <span>1</span><strong>รอชำระเงิน</strong>
+            </li>
+            <li class=""><span>2</span><strong>ตรวจยอดแล้ว</strong></li>
+            <li class=""><span>3</span><strong>เตรียมสินค้า</strong></li>
+            <li class=""><span>4</span><strong>จัดส่งแล้ว</strong></li>
+            <li class=""><span>5</span><strong>สำเร็จ</strong></li>
+          </ol>
+          <div class="order-detail-grid">
+            <div>
+              <section class="panel">
+                <h2>ของขวัญในคำสั่งซื้อ</h2>
+                <div class="order-line-items" data-list="order-items"></div>
+                <div class="summary-line">
+                  <span>ยอดสินค้า</span
+                  ><strong
+                    ><span data-bind="order.subtotal|money">—</span></strong
+                  >
+                </div>
+                <div class="summary-line">
+                  <span>ค่าจัดส่ง</span
+                  ><strong
+                    ><span data-bind="order.shipping_fee|money">—</span></strong
+                  >
+                </div>
+                <div class="summary-line">
+                  <span>ห่อของขวัญ · เลือกไว้แล้ว</span><strong>฿49</strong>
+                </div>
+                <div class="summary-total">
+                  <span>ยอดชำระทั้งหมด</span
+                  ><strong
+                    ><span data-bind="order.total_price|money">—</span></strong
+                  >
+                </div>
+                <div class="gift-message">
+                  <svg
+                    class="icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"
+                    ></path>
+                  </svg>
+                  <div>
+                    <strong>ข้อความบนการ์ด</strong>
+                    <p><span data-bind="order.gift_message">—</span></p>
+                  </div>
+                </div>
+              </section>
+              <section class="panel">
+                <h2>
+                  <svg
+                    class="icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M1 4h13v13H1zM14 9h5l4 5v3h-9"></path>
+                    <circle cx="5" cy="19" r="2"></circle>
+                    <circle cx="18" cy="19" r="2"></circle></svg
+                  >ข้อมูลจัดส่ง
+                </h2>
+                <p class="delivery-address">
+                  <strong><span data-bind="order.shipping_name">—</span></strong
+                  ><br /><span data-bind="order.shipping_phone">—</span
+                  ><br /><span data-bind="order.shipping_address">—</span>
+                </p>
+                <div class="tracking-box">
+                  <span
+                    ><small
+                      ><span data-bind="order.shipping_carrier">—</span></small
+                    ><strong
+                      ><span data-bind="order.tracking_number">—</span></strong
+                    ></span
+                  ><button
+                    type="button"
+                    class="icon-button"
+                    data-copy=""
+                    aria-label="คัดลอกเลขพัสดุ"
+                    data-bind-data-copy="{{order.tracking_number}}"
+                  >
+                    <svg
+                      class="icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <rect x="8" y="8" width="13" height="13" rx="2"></rect>
+                      <path d="M16 8V3H3v13h5"></path>
+                    </svg>
+                  </button>
+                </div>
+              </section>
+            </div>
+            <aside>
+              <section class="panel payment-panel">
+                <div class="notice" data-payment-cancelled="" hidden="">
+                  คำสั่งซื้อถูกยกเลิก ไม่ต้องชำระเงิน
+                </div>
+                <div
+                  class="notice notice-success"
+                  data-payment-paid=""
+                  hidden=""
+                >
+                  ยืนยันยอดชำระเงินแล้ว
+                </div>
+                <h2>
+                  <svg
+                    class="icon"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"></path>
+                    <path d="m8 12 3 3 5-5"></path></svg
+                  >ตรวจสอบการชำระเงิน
+                </h2>
+                <div class="bank-details">
+                  <small>ยอดที่ต้องโอน</small
+                  ><strong class="payment-amount"
+                    ><span data-bind="order.total_price|money">—</span></strong
+                  >
+                  <dl>
+                    <dt>ธนาคาร</dt>
+                    <dd>
+                      <span data-bind="session.settings.bank_name">—</span>
+                    </dd>
+                    <dt>ชื่อบัญชี</dt>
+                    <dd>
+                      <span data-bind="session.settings.bank_account_name"
+                        >—</span
+                      >
+                    </dd>
+                    <dt>เลขบัญชี</dt>
+                    <dd>
+                      <span data-bind="session.settings.bank_account_number"
+                        >—</span
+                      >
+                      <button
+                        class="icon-button"
+                        type="button"
+                        data-copy=""
+                        aria-label="คัดลอกเลขบัญชี"
+                        data-bind-data-copy="{{session.settings.bank_account_number}}"
+                      >
+                        <svg
+                          class="icon"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.7"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            x="8"
+                            y="8"
+                            width="13"
+                            height="13"
+                            rx="2"
+                          ></rect>
+                          <path d="M16 8V3H3v13h5"></path>
+                        </svg>
+                      </button>
+                    </dd>
+                  </dl>
+                </div>
+                <div class="notice" data-review-note="">
+                  <strong>ข้อความจากร้าน</strong>
+                  <p><span data-bind="payment.review_note">—</span></p>
+                </div>
+                <a
+                  class="proof-preview"
+                  href="#"
+                  hidden=""
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    alt=""
+                    data-bind-alt="หลักฐานการชำระเงินคำสั่งซื้อ {{order.order_number}}"
+                  /><span
+                    ><svg
+                      class="icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                      <path d="m16 16 5 5"></path></svg
+                    >เปิดดูหลักฐาน ·
+                    <span data-bind="payment.submitted_at|date">—</span></span
+                  ></a
+                >
+                <form
+                  method="post"
+                  action="/api/admin/orders/1/review"
+                  class="review-form"
+                  data-order-action="review"
+                  data-method="POST"
+                  data-wait-for-session=""
+                >
+                  <input
+                    type="hidden"
+                    name="_csrf"
+                    value=""
+                    data-bind-value="{{session.csrf}}"
+                  />
+                  <div class="field-group">
+                    <label for="review_note">หมายเหตุถึงลูกค้า</label
+                    ><textarea
+                      id="review_note"
+                      name="review_note"
+                      maxlength="500"
+                      placeholder="หากยอดไม่ตรงหรืออ่านสลิปไม่ได้ กรุณาแจ้งเหตุผล"
+                    ></textarea>
+                  </div>
+                  <button
+                    class="btn btn-block"
+                    name="decision"
+                    value="approve"
+                    disabled=""
+                    data-session-lock=""
+                    type="submit"
+                  >
+                    <svg
+                      class="icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m5 12 4 4L20 5"></path></svg
+                    >ตรวจยอดแล้ว ยืนยันรับเงิน</button
+                  ><button
+                    class="btn btn-outline btn-block"
+                    name="decision"
+                    value="reject"
+                    disabled=""
+                    data-session-lock=""
+                    type="submit"
+                  >
+                    ขอหลักฐานใหม่
+                  </button>
+                </form>
+                <p
+                  class="payment-deadline"
+                  data-payment-deadline=""
+                  hidden=""
+                ></p>
+              </section>
+              <form
+                class="cancel-order"
+                method="post"
+                action="/api/admin/orders/1/cancel"
+                data-confirm="ต้องการยกเลิกคำสั่งซื้อนี้และคืนสินค้าเข้าคลังใช่ไหม?"
+                data-method="POST"
+                data-wait-for-session=""
+              >
+                <input
+                  type="hidden"
+                  name="_csrf"
+                  value=""
+                  data-bind-value="{{session.csrf}}"
+                /><button
+                  class="btn btn-text"
+                  disabled=""
+                  data-session-lock=""
+                  type="submit"
+                >
+                  ยกเลิกคำสั่งซื้อ
+                </button>
+              </form>
+            </aside>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="toast-stack" aria-live="polite" aria-atomic="false"></div>
+    <!-- Inert templates are cloned by JavaScript to render repeated API results. -->
+    <template id="product-card-template"
+      ><article class="product-card">
+        <div class="product-visual">
+          <a
+            href=""
+            class="product-image"
+            data-bind-href="/product?slug={{product.slug}}"
+            ><img
+              class=""
+              src="/images/product-placeholder.svg"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              width="600"
+              height="600"
+              data-bind-alt="{{product.name}}" /></a
+          ><span class="product-tag">คัดมาให้แล้ว</span>
+          <form
+            action="/api/favorites/toggle"
+            method="post"
+            class="favorite-form"
+            data-favorite-form=""
+          >
+            <input
+              type="hidden"
+              name="_csrf"
+              value=""
+              data-bind-value="{{session.csrf}}"
+            /><input type="hidden" name="product_id" value="1" /><button
+              type="submit"
+              class="icon-button favorite-button"
+              aria-label=""
+              aria-pressed="false"
+              data-favorite="1"
+              data-bind-aria-label="บันทึกของขวัญที่ชอบ: {{product.name}}"
+            >
+              <svg
+                class="icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"
+                ></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+        <div class="product-copy">
+          <span class="product-category"
+            ><span data-bind="category.name">—</span></span
+          >
+          <h3>
+            <a href="" data-bind-href="/product?slug={{product.slug}}"
+              ><span data-bind="product.name">—</span></a
+            >
+          </h3>
+          <div class="product-price-row">
+            <strong><span data-bind="product.price|money">—</span></strong
+            ><span class="stock-label">พร้อมส่ง</span>
+          </div>
+          <form method="post" action="/api/cart/add" data-add-cart="">
+            <input
+              type="hidden"
+              name="_csrf"
+              value=""
+              data-bind-value="{{session.csrf}}"
+            /><input type="hidden" name="product_id" value="1" /><input
+              type="hidden"
+              name="quantity"
+              value="1"
+            /><button class="product-add" type="submit">
+              <svg
+                class="icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 5v14M5 12h14"></path></svg
+              >เพิ่มลงตะกร้า
+            </button>
+          </form>
+        </div>
+      </article></template
+    ><template id="empty-state-template"
+      ><div class="empty-state">
+        <span class="empty-symbol"
+          ><svg
+            class="icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="8" width="18" height="4" rx="1"></rect>
+            <path
+              d="M5 12v9h14v-9M12 8v13M12 8H7.5A2.5 2.5 0 1 1 10 5.5L12 8Zm0 0h4.5A2.5 2.5 0 1 0 14 5.5L12 8Z"
+            ></path></svg
+        ></span>
+        <h2>ยังไม่มีรายการ</h2>
+        <p>ลองเปลี่ยนเกณฑ์หรือกลับมาใหม่</p>
+        <a class="btn" href="/shop">เลือกของขวัญ</a>
+      </div></template
+    ><template id="badge-template"
+      ><span class="status status-pending">รอชำระเงิน</span></template
+    ><template id="order-items"
+      ><div>
+        <span
+          ><strong><span data-bind="item.product_name">—</span></strong
+          ><small><span data-bind="item.unit_price|money">—</span> × 2</small>
+          <p class="custom-note">
+            รายละเอียดสั่งทำ: <span data-bind="item.custom_note">—</span>
+          </p></span
+        ><b><span data-bind="item.line_total|money">—</span></b>
+      </div></template
+    ><template id="fulfillment-template"
+      ><section class="panel">
+        <h2>ดำเนินการจัดส่ง</h2>
+        <form method="post" action="/admin/orders/1/status">
+          <input
+            type="hidden"
+            name="_csrf"
+            value=""
+            data-bind-value="{{session.csrf}}"
+          /><input type="hidden" name="status" value="Shipped" />
+          <div class="form-row">
+            <div class="field-group">
+              <label for="carrier"
+                >บริษัทขนส่ง <span aria-hidden="true">*</span></label
+              ><input
+                id="carrier"
+                name="carrier"
+                type="text"
+                value=""
+                required=""
+                maxlength="80"
+                placeholder="เช่น ไปรษณีย์ไทย, Kerry, Flash"
+                data-bind-value="{{order.shipping_carrier}}"
+              />
+            </div>
+            <div class="field-group">
+              <label for="tracking"
+                >หมายเลขติดตาม <span aria-hidden="true">*</span></label
+              ><input
+                id="tracking"
+                name="tracking"
+                type="text"
+                value=""
+                required=""
+                maxlength="100"
+                data-bind-value="{{order.tracking_number}}"
+              />
+            </div>
+          </div>
+          <button class="btn" type="submit">ยืนยันจัดส่งสินค้า</button>
+        </form>
+        <p data-fulfillment-done="" hidden="" class="muted">
+          คำสั่งซื้อนี้ดำเนินการครบแล้ว
+        </p>
+      </section></template
+    >
+    <!-- The page module initializes session state and page-specific interactions. -->
+    <script type="module" src="/js/pages/admin-order.js"></script>
+    <template id="icon-check"
+      ><svg
+        class="icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m5 12 4 4L20 5"></path></svg></template
+    ><template id="icon-info"
+      ><svg
+        class="icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 11v6m0-10v1"></path></svg></template
+    ><template id="icon-clock"
+      ><svg
+        class="icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 7v5l4 2"></path></svg></template
+    ><template id="icon-gift"
+      ><svg
+        class="icon"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="8" width="18" height="4" rx="1"></rect>
+        <path
+          d="M5 12v9h14v-9M12 8v13M12 8H7.5A2.5 2.5 0 1 1 10 5.5L12 8Zm0 0h4.5A2.5 2.5 0 1 0 14 5.5L12 8Z"
+        ></path></svg
+    ></template>
+  </body>
+</html>

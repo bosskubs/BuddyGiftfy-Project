@@ -1,0 +1,518 @@
+[
+  {
+    "file": "index.html",
+    "key": "home",
+    "title": "ของขวัญที่เลือกด้วยใจ",
+    "endpoint": "/api/store/home",
+    "legacyPath": "/",
+    "access": "public",
+    "dataFields": [
+      "products",
+      "categories"
+    ],
+    "description": "เมนูและลิงก์เข้าสู่ระบบ เรื่องราวร้าน หมวดหมู่ สินค้าแนะนำ และลิงก์รายละเอียดสินค้าจาก MySQL",
+    "url": "/"
+  },
+  {
+    "file": "shop.html",
+    "key": "shop",
+    "title": "เลือกของขวัญ",
+    "endpoint": "/api/store/products",
+    "legacyPath": "/shop",
+    "access": "public",
+    "dataFields": [
+      "products",
+      "categories",
+      "filters",
+      "pagination"
+    ],
+    "description": "ค้นหาทั้งหมด หรือระบุคำค้น หมวดหมู่ และช่วงราคา รวมเกณฑ์ได้ ผลอยู่ใต้ฟอร์ม พร้อมเรียงลำดับและแบ่งหน้า",
+    "url": "/shop"
+  },
+  {
+    "file": "product.html",
+    "key": "product",
+    "title": "รายละเอียดของขวัญ",
+    "endpoint": "/api/store/products/:slug",
+    "legacyPath": "/product/:slug",
+    "access": "public",
+    "dataFields": [
+      "product",
+      "related"
+    ],
+    "description": "รูปสินค้า ชื่อ รายละเอียด ราคา สต็อก จำนวน รายละเอียดสั่งทำ ห่อของขวัญ บันทึกที่ชอบ และเพิ่มตะกร้า",
+    "url": "/product"
+  },
+  {
+    "file": "about.html",
+    "key": "about",
+    "title": "รู้จักเรา",
+    "endpoint": null,
+    "legacyPath": "/about",
+    "access": "public",
+    "dataFields": [],
+    "description": "เรื่องราวร้าน และข้อมูลสมาชิกครบ 5 คน พร้อมภาพ รหัสนักศึกษา และลิงก์ Instagram คนละหนึ่งลิงก์",
+    "url": "/about"
+  },
+  {
+    "file": "team.html",
+    "key": "team",
+    "title": "ทีม BuddyGiftfy",
+    "endpoint": null,
+    "legacyPath": "/team",
+    "access": "public",
+    "dataFields": [],
+    "description": "สมาชิกทั้ง 5 คน ชื่อ รหัส รูปภาพ และ Instagram ตามข้อมูลที่ทีมแจ้ง",
+    "url": "/team"
+  },
+  {
+    "file": "login.html",
+    "key": "login",
+    "title": "เข้าสู่ระบบ",
+    "endpoint": null,
+    "legacyPath": "/login",
+    "access": "public",
+    "dataFields": [],
+    "description": "ลูกค้าเข้าสู่ระบบด้วยอีเมลและรหัสผ่าน กลับ Home ได้ และกลับหน้าที่ต้องการหลังเข้าสู่ระบบ",
+    "url": "/login"
+  },
+  {
+    "file": "register.html",
+    "key": "register",
+    "title": "สมัครสมาชิก",
+    "endpoint": null,
+    "legacyPath": "/register",
+    "access": "public",
+    "dataFields": [],
+    "description": "สมัครลูกค้าด้วยชื่อ นามสกุล อีเมล รหัสผ่านและยืนยันรหัสผ่าน รักษาตะกร้าและรายการที่ชอบจากผู้เข้าชม",
+    "url": "/register"
+  },
+  {
+    "file": "favorites.html",
+    "key": "favorites",
+    "title": "ของขวัญที่ชอบ",
+    "endpoint": "/api/customer/favorites",
+    "legacyPath": "/favorites",
+    "access": "public",
+    "dataFields": [
+      "products"
+    ],
+    "description": "รายการของขวัญที่บันทึกไว้ เพิ่มตะกร้าหรือนำออกได้ รายการของสมาชิกคงอยู่เมื่อเข้าสู่ระบบใหม่",
+    "url": "/favorites"
+  },
+  {
+    "file": "cart.html",
+    "key": "cart",
+    "title": "ตะกร้าของขวัญ",
+    "endpoint": "/api/customer/cart",
+    "legacyPath": "/cart",
+    "access": "public",
+    "dataFields": [
+      "items",
+      "totals"
+    ],
+    "description": "รายการและรายละเอียดสั่งทำ ปรับจำนวนหรือลบสินค้า ยอดรวมและค่าส่ง ตรวจจำนวนพร้อมขายก่อน checkout",
+    "url": "/cart"
+  },
+  {
+    "file": "checkout.html",
+    "key": "checkout",
+    "title": "จัดส่งของขวัญ",
+    "endpoint": "/api/customer/checkout",
+    "legacyPath": "/checkout",
+    "access": "customer",
+    "dataFields": [
+      "items",
+      "customer",
+      "totals"
+    ],
+    "description": "ชื่อ เบอร์โทร ที่อยู่จัดส่ง บันทึกที่อยู่ ห่อของขวัญ ข้อความการ์ด และยอดชำระจริงจากการคำนวณฝั่ง server",
+    "url": "/checkout"
+  },
+  {
+    "file": "account.html",
+    "key": "account",
+    "title": "บัญชีของฉัน",
+    "endpoint": "/api/customer/account",
+    "legacyPath": "/account",
+    "access": "customer",
+    "dataFields": [
+      "customer",
+      "orders"
+    ],
+    "description": "ข้อมูลลูกค้า รายการคำสั่งซื้อล่าสุด ลิงก์ติดตามและแก้ข้อมูลส่วนตัว รวมปุ่มออกจากระบบ",
+    "url": "/account"
+  },
+  {
+    "file": "profile.html",
+    "key": "profile",
+    "title": "ข้อมูลของฉัน",
+    "endpoint": "/api/customer/profile",
+    "legacyPath": "/account/profile",
+    "access": "customer",
+    "dataFields": [
+      "customer"
+    ],
+    "description": "แก้ชื่อ เบอร์โทร ที่อยู่ และเปลี่ยนรหัสผ่านของตนเองโดยยืนยันรหัสผ่านเดิม",
+    "url": "/profile"
+  },
+  {
+    "file": "order.html",
+    "key": "order",
+    "title": "คำสั่งซื้อ",
+    "endpoint": "/api/customer/orders/:number",
+    "legacyPath": "/order/:number",
+    "access": "customer",
+    "dataFields": [
+      "order",
+      "items",
+      "payment"
+    ],
+    "description": "รายละเอียดสินค้า ยอดเงิน ธนาคาร กำหนดชำระ อัปโหลดสลิป ผลตรวจ เหตุผลแก้ไข สถานะจัดส่ง เลขพัสดุ และยกเลิกเมื่อยังทำได้",
+    "url": "/order"
+  },
+  {
+    "file": "contact.html",
+    "key": "contact",
+    "title": "ติดต่อร้าน",
+    "endpoint": null,
+    "legacyPath": "/contact",
+    "access": "public",
+    "dataFields": [],
+    "description": "ชื่อ อีเมล หมายเลขออเดอร์และข้อความส่งถึงร้าน ใช้ฟอร์มที่เชื่อมฐานข้อมูลข้อความจริง",
+    "url": "/contact"
+  },
+  {
+    "file": "help.html",
+    "key": "help",
+    "title": "คำถามที่พบบ่อย",
+    "endpoint": null,
+    "legacyPath": "/help",
+    "access": "public",
+    "dataFields": [],
+    "description": "คำถามเรื่องสั่งซื้อ ชำระเงิน จัดส่งและห่อของขวัญ โดยค่าร้านอ่านจาก settings ปัจจุบัน",
+    "url": "/help"
+  },
+  {
+    "file": "references.html",
+    "key": "references",
+    "title": "แหล่งอ้างอิง",
+    "endpoint": null,
+    "legacyPath": "/references",
+    "access": "public",
+    "dataFields": [],
+    "description": "เครดิตภาพตามเอกสาร webproject.pdf จับคู่ต้นทางและเลขภาพ 16 รายการ พร้อมแหล่งข้อมูลเทคโนโลยี",
+    "url": "/references"
+  },
+  {
+    "file": "gift-budget.html",
+    "key": "gift-budget",
+    "title": "เทียบงบของขวัญ",
+    "endpoint": null,
+    "legacyPath": "/gift-budget",
+    "access": "public",
+    "dataFields": [],
+    "description": "เทียบงบเงินบาทกับ USD/EUR/JPY/GBP ผ่าน Frankfurter มีวันที่ข้อมูลและแจ้งข้อผิดพลาด/ลองใหม่ ยอดร้านยังเป็นบาท",
+    "url": "/gift-budget"
+  },
+  {
+    "file": "404.html",
+    "key": "not-found",
+    "title": "ไม่พบหน้าที่ต้องการ",
+    "endpoint": null,
+    "legacyPath": null,
+    "access": "public",
+    "dataFields": [],
+    "description": "แจ้งว่าไม่พบหน้า มี navigation และลิงก์กลับหน้าร้าน URL ที่ไม่มีอยู่ตอบ HTTP 404",
+    "url": "/404"
+  },
+  {
+    "file": "admin/index.html",
+    "key": "dashboard",
+    "title": "ภาพรวมร้าน",
+    "endpoint": "/api/admin/overview",
+    "legacyPath": "/admin",
+    "access": "operations",
+    "dataFields": [
+      "metrics",
+      "orders",
+      "lowStock"
+    ],
+    "description": "สรุปยอด งานรอชำระ/ตรวจสลิป ข้อความใหม่ ออเดอร์ล่าสุดและสินค้าใกล้หมด พร้อมเตือนตั้งธนาคาร",
+    "url": "/admin"
+  },
+  {
+    "file": "admin/login.html",
+    "key": "admin-login",
+    "title": "เข้าสู่ระบบผู้ดูแล",
+    "endpoint": null,
+    "legacyPath": "/admin/login",
+    "access": "public",
+    "dataFields": [],
+    "description": "Form อีเมล รหัสผ่าน ปุ่ม Login และลิงก์ Home ส่ง JSON ไปบริการพิสูจน์ตัวตนและรักษาปลายทาง next",
+    "url": "/admin/login"
+  },
+  {
+    "file": "admin/products.html",
+    "key": "admin-products",
+    "title": "จัดการสินค้า",
+    "endpoint": "/api/admin/products",
+    "legacyPath": "/admin/products",
+    "access": "admin",
+    "dataFields": [
+      "products",
+      "categories",
+      "filters"
+    ],
+    "description": "ค้นสินค้าด้วยคำค้น/ชื่อหรือ SKU หมวดหมู่ และสถานะ เชื่อมเพิ่ม แก้ไข ยืนยันลบ และซ่อนสินค้าที่มีประวัติ",
+    "url": "/admin/products"
+  },
+  {
+    "file": "admin/product-new.html",
+    "key": "product-new",
+    "title": "เพิ่มสินค้า",
+    "endpoint": "/api/admin/product-options",
+    "legacyPath": "/admin/products/new",
+    "access": "admin",
+    "dataFields": [
+      "product",
+      "categories"
+    ],
+    "description": "เพิ่มชื่อ หมวด รายละเอียด ราคา สต็อก รูปภาพ สถานะ และสินค้าแนะนำด้วย POST; รูป PNG/JPG ถูกตรวจและแปลง WebP",
+    "url": "/admin/product-new"
+  },
+  {
+    "file": "admin/product-edit.html",
+    "key": "product-edit",
+    "title": "แก้ไขสินค้า",
+    "endpoint": "/api/admin/products/:id",
+    "legacyPath": "/admin/products/:id/edit",
+    "access": "admin",
+    "dataFields": [
+      "product",
+      "categories"
+    ],
+    "description": "อ่านสินค้าเดิมและตัวเลือกหมวด แก้ข้อมูลและบันทึกด้วย PUT โดย API ตรวจความถูกต้อง",
+    "url": "/admin/product-edit"
+  },
+  {
+    "file": "admin/product-delete.html",
+    "key": "product-delete",
+    "title": "ลบสินค้า",
+    "endpoint": "/api/admin/products/:id/deletion",
+    "legacyPath": "/admin/products/:id/delete",
+    "access": "admin",
+    "dataFields": [
+      "product",
+      "history"
+    ],
+    "description": "พิมพ์ SKU ยืนยันก่อน DELETE; สินค้ามีประวัติคำสั่งซื้อใช้ซ่อนเพื่อเก็บประวัติ",
+    "url": "/admin/product-delete"
+  },
+  {
+    "file": "admin/accounts.html",
+    "key": "admin-accounts",
+    "title": "จัดการผู้ดูแล",
+    "endpoint": "/api/admin/accounts",
+    "legacyPath": "/admin/accounts",
+    "access": "owner",
+    "dataFields": [
+      "accounts",
+      "filters"
+    ],
+    "description": "Owner ค้นบัญชีผู้ดูแลด้วยชื่อ/อีเมล บทบาท และสถานะ แล้วเชื่อมเพิ่ม แก้ไข และลบ",
+    "url": "/admin/accounts"
+  },
+  {
+    "file": "admin/account-new.html",
+    "key": "account-new",
+    "title": "เพิ่มผู้ดูแล",
+    "endpoint": "/api/admin/account-options",
+    "legacyPath": "/admin/accounts/new",
+    "access": "owner",
+    "dataFields": [
+      "account"
+    ],
+    "description": "เพิ่มชื่อ นามสกุล อีเมล รหัสผ่าน บทบาท อายุ ที่อยู่ และความต้องการ; backend hash รหัสผ่านก่อนบันทึก",
+    "url": "/admin/account-new"
+  },
+  {
+    "file": "admin/account-edit.html",
+    "key": "account-edit",
+    "title": "แก้ไขผู้ดูแล",
+    "endpoint": "/api/admin/accounts/:id",
+    "legacyPath": "/admin/accounts/:id/edit",
+    "access": "owner",
+    "dataFields": [
+      "account"
+    ],
+    "description": "แก้โปรไฟล์ บทบาท สถานะ และรหัสผ่านใหม่ของผู้ดูแลด้วย PUT มีการป้องกันลดสิทธิ์บัญชีที่ใช้อยู่",
+    "url": "/admin/account-edit"
+  },
+  {
+    "file": "admin/account-delete.html",
+    "key": "account-delete",
+    "title": "ลบผู้ดูแล",
+    "endpoint": "/api/admin/accounts/:id/deletion",
+    "legacyPath": "/admin/accounts/:id/delete",
+    "access": "owner",
+    "dataFields": [
+      "account"
+    ],
+    "description": "ยืนยันอีเมลและความเข้าใจก่อน DELETE ป้องกันลบตนเองและเจ้าของร้านที่จำเป็นต่อระบบ",
+    "url": "/admin/account-delete"
+  },
+  {
+    "file": "admin/categories.html",
+    "key": "admin-categories",
+    "title": "จัดการหมวดหมู่",
+    "endpoint": "/api/admin/categories",
+    "legacyPath": "/admin/categories",
+    "access": "operations",
+    "dataFields": [
+      "categories"
+    ],
+    "description": "แสดงหมวด จำนวนสินค้ารวมและพร้อมขาย ลำดับ และงานสั่งทำ พร้อมลิงก์เพิ่ม แก้ไข ลบ",
+    "url": "/admin/categories"
+  },
+  {
+    "file": "admin/category-new.html",
+    "key": "category-new",
+    "title": "เพิ่มหมวดหมู่",
+    "endpoint": "/api/admin/category-options",
+    "legacyPath": "/admin/categories/new",
+    "access": "operations",
+    "dataFields": [
+      "category",
+      "error"
+    ],
+    "description": "เพิ่มชื่อ ลำดับ และระบุว่าเป็นหมวดงานสั่งทำ ใช้ชื่อหมวดจริงในตัวเลือกสินค้า",
+    "url": "/admin/category-new"
+  },
+  {
+    "file": "admin/category-edit.html",
+    "key": "category-edit",
+    "title": "แก้ไขหมวดหมู่",
+    "endpoint": "/api/admin/categories/:id",
+    "legacyPath": "/admin/categories/:id/edit",
+    "access": "operations",
+    "dataFields": [
+      "category",
+      "error"
+    ],
+    "description": "เปลี่ยนชื่อ/ลำดับ/งานสั่งทำ ชื่อที่เปลี่ยนเชื่อมไปยังสินค้าในหมวดผ่านฐานข้อมูล",
+    "url": "/admin/category-edit"
+  },
+  {
+    "file": "admin/category-delete.html",
+    "key": "category-delete",
+    "title": "ลบหมวดหมู่",
+    "endpoint": "/api/admin/categories/:id/deletion",
+    "legacyPath": "/admin/categories/:id/delete",
+    "access": "operations",
+    "dataFields": [
+      "category",
+      "categories",
+      "error",
+      "destination"
+    ],
+    "description": "หมวดที่มีสินค้าต้องเลือกหมวดปลายทาง ย้ายสินค้าแล้วลบหมวดใน transaction",
+    "url": "/admin/category-delete"
+  },
+  {
+    "file": "admin/orders.html",
+    "key": "admin-orders",
+    "title": "คำสั่งซื้อ",
+    "endpoint": "/api/admin/orders",
+    "legacyPath": "/admin/orders",
+    "access": "operations",
+    "dataFields": [
+      "orders",
+      "filters"
+    ],
+    "description": "ค้นออเดอร์ด้วยหมายเลข ชื่อ อีเมล และสถานะ เปิดดูรายละเอียดและดำเนินการตามสถานะ",
+    "url": "/admin/orders"
+  },
+  {
+    "file": "admin/order.html",
+    "key": "admin-order",
+    "title": "รายละเอียดคำสั่งซื้อ",
+    "endpoint": "/api/admin/orders/:id",
+    "legacyPath": "/admin/orders/:id",
+    "access": "operations",
+    "dataFields": [
+      "order",
+      "items",
+      "payment"
+    ],
+    "description": "แอดมินตรวจสลิป อนุมัติ/ปฏิเสธพร้อมเหตุผล บันทึกเตรียม/จัดส่ง/สำเร็จ กรอกขนส่งและเลขพัสดุ",
+    "url": "/admin/order"
+  },
+  {
+    "file": "admin/payments.html",
+    "key": "payments",
+    "title": "ตรวจสอบการชำระเงิน",
+    "endpoint": "/api/admin/payments",
+    "legacyPath": "/admin/payments",
+    "access": "operations",
+    "dataFields": [
+      "orders",
+      "filters"
+    ],
+    "description": "รายการรอตรวจการชำระเงิน เชื่อมหน้ารายละเอียดออเดอร์เพื่อให้แอดมินตรวจยอดด้วยตนเอง",
+    "url": "/admin/payments"
+  },
+  {
+    "file": "admin/customers.html",
+    "key": "customers",
+    "title": "ลูกค้า",
+    "endpoint": "/api/admin/customers",
+    "legacyPath": "/admin/customers",
+    "access": "operations",
+    "dataFields": [
+      "customers",
+      "filters"
+    ],
+    "description": "รายชื่อลูกค้าและข้อมูลสรุปที่แอดมินมีสิทธิ์ดู ค้นหาจากชื่อหรืออีเมล",
+    "url": "/admin/customers"
+  },
+  {
+    "file": "admin/messages.html",
+    "key": "messages",
+    "title": "ข้อความจากลูกค้า",
+    "endpoint": "/api/admin/messages",
+    "legacyPath": "/admin/messages",
+    "access": "operations",
+    "dataFields": [
+      "messages"
+    ],
+    "description": "ข้อความลูกค้าจากฟอร์มติดต่อ เปลี่ยนสถานะใหม่/อ่านแล้ว/ดูแลแล้วและบันทึก MySQL",
+    "url": "/admin/messages"
+  },
+  {
+    "file": "admin/settings.html",
+    "key": "settings",
+    "title": "ตั้งค่าร้าน",
+    "endpoint": "/api/admin/settings",
+    "legacyPath": "/admin/settings",
+    "access": "owner",
+    "dataFields": [
+      "settings"
+    ],
+    "description": "Owner ตั้งชื่อร้าน ธนาคาร ช่องทางติดต่อ ค่าส่ง เกณฑ์ส่งฟรี ค่าห่อและเวลาสำรองสินค้า",
+    "url": "/admin/settings"
+  },
+  {
+    "file": "admin/profile.html",
+    "key": "admin-profile",
+    "title": "ข้อมูลของฉัน",
+    "endpoint": "/api/admin/profile",
+    "legacyPath": "/admin/profile",
+    "access": "admin",
+    "dataFields": [
+      "account"
+    ],
+    "description": "ผู้ดูแลแก้ชื่อส่วนตัวและเปลี่ยนรหัสผ่านโดยตรวจรหัสเดิม พร้อมเพิกถอน session อุปกรณ์อื่น",
+    "url": "/admin/profile"
+  }
+]

@@ -1,0 +1,3 @@
+ALTER TABLE admin_accounts ADD COLUMN age SMALLINT UNSIGNED NULL;
+ALTER TABLE admin_accounts ADD COLUMN address TEXT NULL;
+ALTER TABLE admin_accounts ADD COLUMN preferences TEXT NULL;

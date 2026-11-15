@@ -1,0 +1,1577 @@
+{
+  "baseUrl": "http://localhost:3001",
+  "prerequisites": [
+    "ใช้ฐานข้อมูลสาธิตเท่านั้น คำขอเปลี่ยนข้อมูลจริง",
+    "GET /api/session แล้วเก็บ bg_session cookie และ session.csrf",
+    "หลัง login/register/logout ให้ GET /api/session อีกครั้งเพื่อใช้ CSRF ใหม่",
+    "ใช้บัญชี demo ใน SQL และแทน {{demoPassword}} ตามคู่มือ",
+    "ID/หมายเลขออเดอร์/token/ไฟล์ภาพต้องมาจากข้อมูลที่สร้างในขั้นก่อน",
+    "ออเดอร์ตัวอย่าง A/B ใช้คนละรายการเมื่อคำสั่งเปลี่ยนสถานะหรือยกเลิก",
+    "{{imageDataUrl}} คือ data:image/png;base64,... หรือ JPEG ของไฟล์ไม่เกิน 5 MB ไม่ใช่ข้อความตัวย่อ",
+    "ตัวอย่างที่จงใจผิดคาดหวัง 4xx; legacy-payment-status คาดหวัง 400 เสมอ"
+  ],
+  "services": [
+    {
+      "id": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "title": "ตรวจ MySQL",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/health"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/health"
+        }
+      ]
+    },
+    {
+      "id": "session",
+      "method": "GET",
+      "path": "/api/session",
+      "title": "อ่าน session และ CSRF",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/session"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/session"
+        }
+      ]
+    },
+    {
+      "id": "page",
+      "method": "GET",
+      "path": "/api/page",
+      "title": "ข้อมูลผ่าน URL เดิม (รองรับความเข้ากันได้; หน้า HTML ใหม่ไม่เรียก)",
+      "role": "ตามหน้า",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/page?path=%2Fshop"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/page?path=%2Fadmin%2Fproducts"
+        }
+      ]
+    },
+    {
+      "id": "admin-login",
+      "method": "POST",
+      "path": "/api/auth/admin/login",
+      "title": "เข้าสู่ระบบ",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/auth/admin/login",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "email": "owner@example.test",
+            "password": "{{demoPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/auth/admin/login",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "email": "owner@example.test",
+            "password": "wrong-password"
+          }
+        }
+      ]
+    },
+    {
+      "id": "customer-login",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "title": "เข้าสู่ระบบ",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/auth/login",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "email": "buyer@example.test",
+            "password": "{{demoPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/auth/login",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "email": "buyer@example.test",
+            "password": "wrong-password"
+          }
+        }
+      ]
+    },
+    {
+      "id": "register",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "title": "สมัครลูกค้า",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/auth/register",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Gift",
+            "last_name": "Buyer",
+            "email": "buyer-a@example.test",
+            "password": "{{demoPassword}}",
+            "password_confirm": "{{demoPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/auth/register",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Buddy",
+            "last_name": "Buyer",
+            "email": "buyer-b@example.test",
+            "password": "{{demoPassword}}",
+            "password_confirm": "{{demoPassword}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "logout",
+      "method": "POST",
+      "path": "/api/logout",
+      "title": "ออกจากระบบ",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/logout",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/logout",
+          "body": {
+            "_csrf": "invalid-token"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-logout",
+      "method": "POST",
+      "path": "/api/admin/logout",
+      "title": "ออกจากระบบ",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/logout",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/logout",
+          "body": {
+            "_csrf": "invalid-token"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-list",
+      "method": "GET",
+      "path": "/api/admin/products",
+      "title": "ค้นหาทั้งหมด/รวม 3 เกณฑ์",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products?q=Gift&category=ตุ๊กตา&status=Available"
+        }
+      ]
+    },
+    {
+      "id": "product-detail",
+      "method": "GET",
+      "path": "/api/admin/products/:id",
+      "title": "อ่านข้อมูลหนึ่งรายการ",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products/{{productId}}"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products/99999999"
+        }
+      ]
+    },
+    {
+      "id": "product-insert",
+      "method": "POST",
+      "path": "/api/admin/products",
+      "title": "เพิ่มข้อมูล",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Gift A",
+            "category": "ตุ๊กตา",
+            "description": "ของขวัญสาธิต",
+            "price": "250.50",
+            "stock_quantity": "5",
+            "image_url": "/images/product-placeholder.svg",
+            "status": "Available"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Gift B",
+            "category": "ตุ๊กตา",
+            "description": "ของขวัญสาธิต",
+            "price": "250.50",
+            "stock_quantity": "5",
+            "image_url": "/images/product-placeholder.svg",
+            "status": "Available"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-update",
+      "method": "PUT",
+      "path": "/api/admin/products/:id",
+      "title": "แก้ไขข้อมูล",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Gift A",
+            "category": "ตุ๊กตา",
+            "description": "ของขวัญสาธิต",
+            "price": "399.25",
+            "stock_quantity": "5",
+            "image_url": "/images/product-placeholder.svg",
+            "status": "Available"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Gift A",
+            "category": "ตุ๊กตา",
+            "description": "ของขวัญสาธิต",
+            "price": "399.25",
+            "stock_quantity": "8",
+            "image_url": "/images/product-placeholder.svg",
+            "status": "Available"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-delete",
+      "method": "DELETE",
+      "path": "/api/admin/products/:id",
+      "title": "ลบข้อมูลพร้อมคำยืนยัน",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "confirm_sku": "{{productSku}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "confirm_sku": "wrong"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-list",
+      "method": "GET",
+      "path": "/api/admin/accounts",
+      "title": "ค้นหาทั้งหมด/รวม 3 เกณฑ์",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts?q=Demo&role=Editor&status=Active"
+        }
+      ]
+    },
+    {
+      "id": "admin-detail",
+      "method": "GET",
+      "path": "/api/admin/accounts/:id",
+      "title": "อ่านข้อมูลหนึ่งรายการ",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts/{{adminId}}"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts/99999999"
+        }
+      ]
+    },
+    {
+      "id": "admin-insert",
+      "method": "POST",
+      "path": "/api/admin/accounts",
+      "title": "เพิ่มข้อมูล",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Demo",
+            "last_name": "Editor",
+            "email": "editor-a@example.test",
+            "role": "Editor",
+            "age": "22",
+            "address": "ที่อยู่สาธิต กรุงเทพฯ",
+            "preferences": "ดูแลสินค้า",
+            "password": "{{demoPassword}}",
+            "password_confirm": "{{demoPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Demo",
+            "last_name": "Editor",
+            "email": "editor-b@example.test",
+            "role": "Editor",
+            "age": "22",
+            "address": "ที่อยู่สาธิต กรุงเทพฯ",
+            "preferences": "ดูแลสินค้า",
+            "password": "{{demoPassword}}",
+            "password_confirm": "{{demoPassword}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-update",
+      "method": "PUT",
+      "path": "/api/admin/accounts/:id",
+      "title": "แก้ไขข้อมูล",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Demo",
+            "last_name": "Editor",
+            "email": "editor-a@example.test",
+            "role": "Manager",
+            "age": "22",
+            "address": "ที่อยู่สาธิต กรุงเทพฯ",
+            "preferences": "ดูแลสินค้า",
+            "status": "Active"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Demo",
+            "last_name": "Editor",
+            "email": "editor-a@example.test",
+            "role": "Manager",
+            "age": "23",
+            "address": "ที่อยู่สาธิต กรุงเทพฯ",
+            "preferences": "ดูแลสินค้า",
+            "status": "Active"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-delete",
+      "method": "DELETE",
+      "path": "/api/admin/accounts/:id",
+      "title": "ลบข้อมูลพร้อมคำยืนยัน",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "confirm_email": "{{adminEmail}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts/{{id}}",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "confirm_email": "wrong@example.test"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-hide",
+      "method": "POST",
+      "path": "/api/admin/products/:id/hide",
+      "title": "ซ่อนสินค้า",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products/{{id}}/hide",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products/{{id}}/hide",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "product-image",
+      "method": "POST",
+      "path": "/api/admin/product-image",
+      "title": "อัปโหลดรูปสินค้า",
+      "role": "Owner/Manager/Editor",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/product-image",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "image": "{{imageDataUrl}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/product-image",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "image": "not-an-image"
+          }
+        }
+      ]
+    },
+    {
+      "id": "category-list",
+      "method": "GET",
+      "path": "/api/admin/categories",
+      "title": "อ่านหมวดหมู่",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories"
+        }
+      ]
+    },
+    {
+      "id": "category-insert",
+      "method": "POST",
+      "path": "/api/admin/categories/new",
+      "title": "เพิ่มหมวดหมู่",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories/new",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Birthday",
+            "sort_order": "1",
+            "is_custom": "0"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories/new",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Anniversary",
+            "sort_order": "2",
+            "is_custom": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "category-update",
+      "method": "POST",
+      "path": "/api/admin/categories/:id/edit",
+      "title": "แก้ไขหมวดหมู่",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories/{{id}}/edit",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Birthday gifts",
+            "sort_order": "3",
+            "is_custom": "0"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories/{{id}}/edit",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "name": "Custom gifts",
+            "sort_order": "4",
+            "is_custom": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "category-delete",
+      "method": "POST",
+      "path": "/api/admin/categories/:id/delete",
+      "title": "ลบ/ย้ายหมวดหมู่",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories/{{id}}/delete",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories/{{id}}/delete",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "destination_id": "{{destinationCategoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cart-add",
+      "method": "POST",
+      "path": "/api/cart/add",
+      "title": "เพิ่มสินค้าเข้าตะกร้า",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/cart/add",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}",
+            "quantity": "1"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/cart/add",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}",
+            "quantity": "2",
+            "custom_note": "Buddy",
+            "gift_wrap": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cart-update",
+      "method": "POST",
+      "path": "/api/cart/update",
+      "title": "เปลี่ยนจำนวนในตะกร้า",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/cart/update",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}",
+            "quantity": "2"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/cart/update",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}",
+            "step": "-1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cart-remove",
+      "method": "POST",
+      "path": "/api/cart/remove",
+      "title": "นำสินค้าออกจากตะกร้า",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/cart/remove",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/cart/remove",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{otherProductId}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "favorite",
+      "method": "POST",
+      "path": "/api/favorites/toggle",
+      "title": "บันทึก/นำสินค้าที่ชอบออก",
+      "role": "Session",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/favorites/toggle",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{productId}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/favorites/toggle",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "product_id": "{{otherProductId}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "checkout",
+      "method": "POST",
+      "path": "/api/checkout",
+      "title": "สร้างออเดอร์และสำรองสต็อก",
+      "role": "Customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/checkout",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "checkout_token": "{{checkoutToken}}",
+            "shipping_name": "Gift Buyer",
+            "shipping_phone": "0812345678",
+            "shipping_address": "99 Bangkok Thailand",
+            "gift_wrap": "1"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/checkout",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "checkout_token": "{{checkoutToken}}",
+            "shipping_name": "Buddy Buyer",
+            "shipping_phone": "0812345678",
+            "shipping_address": "99 Bangkok Thailand",
+            "gift_wrap": "0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "customer-profile",
+      "method": "POST",
+      "path": "/api/account/profile",
+      "title": "แก้ไขข้อมูลตนเอง",
+      "role": "Customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/account/profile",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Happy",
+            "last_name": "Buyer",
+            "phone": "0812345678",
+            "address": "99 Bangkok Thailand"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/account/profile",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Buddy",
+            "last_name": "Gift",
+            "phone": "0899999999",
+            "address": "88 Chiang Mai Thailand"
+          }
+        }
+      ]
+    },
+    {
+      "id": "customer-password",
+      "method": "POST",
+      "path": "/api/account/password",
+      "title": "เปลี่ยนรหัสผ่านตนเอง",
+      "role": "Customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/account/password",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "current_password": "{{demoPassword}}",
+            "password": "{{newPassword}}",
+            "password_confirm": "{{newPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/account/password",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "current_password": "wrong-password",
+            "password": "{{newPassword}}",
+            "password_confirm": "{{newPassword}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-self-profile",
+      "method": "POST",
+      "path": "/api/admin/profile",
+      "title": "แก้ไขข้อมูลตนเอง",
+      "role": "Admin",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/profile",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Happy",
+            "last_name": "Buyer",
+            "phone": "0812345678",
+            "address": "99 Bangkok Thailand"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/profile",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Buddy",
+            "last_name": "Gift",
+            "phone": "0899999999",
+            "address": "88 Chiang Mai Thailand"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-self-password",
+      "method": "POST",
+      "path": "/api/admin/profile/password",
+      "title": "เปลี่ยนรหัสผ่านตนเอง",
+      "role": "Admin",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/profile/password",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "current_password": "{{demoPassword}}",
+            "password": "{{newPassword}}",
+            "password_confirm": "{{newPassword}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/profile/password",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "current_password": "wrong-password",
+            "password": "{{newPassword}}",
+            "password_confirm": "{{newPassword}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "order-proof",
+      "method": "POST",
+      "path": "/api/order/:number/proof",
+      "title": "ส่งสลิป",
+      "role": "Customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/order/{{orderNumber}}/proof",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "image": "{{imageDataUrl}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/order/{{orderNumber}}/proof",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "image": "invalid-image"
+          }
+        }
+      ]
+    },
+    {
+      "id": "order-cancel",
+      "method": "POST",
+      "path": "/api/order/:number/cancel",
+      "title": "ลูกค้ายกเลิกออเดอร์ค้างชำระ",
+      "role": "Customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/order/{{orderNumber}}/cancel",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/order/{{orderNumber}}/cancel",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "payment-proof",
+      "method": "GET",
+      "path": "/api/payment-proof/:id",
+      "title": "อ่านสลิปส่วนตัว",
+      "role": "เจ้าของออเดอร์/Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/payment-proof/{{paymentId}}"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/payment-proof/99999999"
+        }
+      ]
+    },
+    {
+      "id": "settings",
+      "method": "POST",
+      "path": "/api/admin/settings",
+      "title": "ตั้งค่าร้าน",
+      "role": "Owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/settings",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "store_name": "Demo Gift Shop",
+            "support_email": "demo@example.test",
+            "bank_name": "Demo Bank (test only)",
+            "bank_account_name": "Demo Only",
+            "bank_account_number": "0000000000",
+            "shipping_fee": "50",
+            "free_shipping_threshold": "1000",
+            "gift_wrap_fee": "49",
+            "payment_window_hours": "24",
+            "announcement": "ร้านสาธิต"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/settings",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "store_name": "Demo Gift Shop",
+            "shipping_fee": "-1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "order-review",
+      "method": "POST",
+      "path": "/api/admin/orders/:id/review",
+      "title": "ตรวจสลิป",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/orders/{{id}}/review",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "decision": "approve",
+            "review_note": "ตรวจยอดแล้ว"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/orders/{{id}}/review",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "decision": "reject",
+            "review_note": "ยอดไม่ตรง กรุณาส่งหลักฐานใหม่"
+          }
+        }
+      ]
+    },
+    {
+      "id": "order-status",
+      "method": "POST",
+      "path": "/api/admin/orders/:id/status",
+      "title": "เปลี่ยนสถานะจัดส่ง",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/orders/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Preparing"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/orders/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Shipped",
+            "carrier": "Demo Carrier",
+            "tracking": "DEMO123456"
+          }
+        }
+      ]
+    },
+    {
+      "id": "admin-order-cancel",
+      "method": "POST",
+      "path": "/api/admin/orders/:id/cancel",
+      "title": "ผู้ดูแลยกเลิกออเดอร์ค้างชำระ",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/orders/{{id}}/cancel",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/orders/{{id}}/cancel",
+          "body": {
+            "_csrf": "{{csrf}}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "message-status",
+      "method": "POST",
+      "path": "/api/admin/messages/:id/status",
+      "title": "เปลี่ยนสถานะข้อความ",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/messages/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Read"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/messages/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Resolved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "method": "POST",
+      "path": "/api/contact",
+      "title": "ส่งข้อความถึงร้าน",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/contact",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Gift",
+            "last_name": "Buyer",
+            "email": "gift@example.test",
+            "message": "สอบถามของขวัญและการจัดส่ง"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/contact",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "first_name": "Buddy",
+            "last_name": "Buyer",
+            "email": "buddy@example.test",
+            "message": "ต้องการสอบถามงานสั่งทำ"
+          }
+        }
+      ]
+    },
+    {
+      "id": "legacy-payment-status",
+      "method": "POST",
+      "path": "/api/admin/payments/:id/status",
+      "title": "ปฏิเสธการข้ามขั้นตอนตรวจสลิป",
+      "role": "Owner/Manager",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/payments/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Completed"
+          }
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/payments/{{id}}/status",
+          "body": {
+            "_csrf": "{{csrf}}",
+            "status": "Failed"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uploaded-image",
+      "method": "GET",
+      "path": "/api/images/uploads/:filename",
+      "title": "อ่านภาพสินค้าที่อัปโหลด",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/images/uploads/{{imageFilename}}"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/images/uploads/missing.webp"
+        }
+      ]
+    },
+    {
+      "id": "public-rate",
+      "method": "GET",
+      "path": "https://api.frankfurter.dev/v2/rate/thb/:quote",
+      "title": "อัตราอ้างอิงงบของขวัญ",
+      "role": "Public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "https://api.frankfurter.dev/v2/rate/thb/usd"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "https://api.frankfurter.dev/v2/rate/thb/eur"
+        }
+      ]
+    },
+    {
+      "id": "view-home",
+      "method": "GET",
+      "path": "/api/store/home",
+      "title": "อ่านข้อมูลหน้า ของขวัญที่เลือกด้วยใจ",
+      "role": "public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/store/home"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/store/home?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-shop",
+      "method": "GET",
+      "path": "/api/store/products",
+      "title": "อ่านข้อมูลหน้า เลือกของขวัญ",
+      "role": "public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/store/products"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/store/products?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-product",
+      "method": "GET",
+      "path": "/api/store/products/:slug",
+      "title": "อ่านข้อมูลหน้า รายละเอียดของขวัญ",
+      "role": "public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/store/products/buddy-bear"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/store/products/custom-face-pillow"
+        }
+      ]
+    },
+    {
+      "id": "view-favorites",
+      "method": "GET",
+      "path": "/api/customer/favorites",
+      "title": "อ่านข้อมูลหน้า ของขวัญที่ชอบ",
+      "role": "public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/favorites"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/favorites?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-cart",
+      "method": "GET",
+      "path": "/api/customer/cart",
+      "title": "อ่านข้อมูลหน้า ตะกร้าของขวัญ",
+      "role": "public",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/cart"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/cart?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-checkout",
+      "method": "GET",
+      "path": "/api/customer/checkout",
+      "title": "อ่านข้อมูลหน้า จัดส่งของขวัญ",
+      "role": "customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/checkout"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/checkout?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-account",
+      "method": "GET",
+      "path": "/api/customer/account",
+      "title": "อ่านข้อมูลหน้า บัญชีของฉัน",
+      "role": "customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/account"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/account?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-profile",
+      "method": "GET",
+      "path": "/api/customer/profile",
+      "title": "อ่านข้อมูลหน้า ข้อมูลของฉัน",
+      "role": "customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/profile"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/profile?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-order",
+      "method": "GET",
+      "path": "/api/customer/orders/:number",
+      "title": "อ่านข้อมูลหน้า คำสั่งซื้อ",
+      "role": "customer",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/customer/orders/{{orderNumber}}"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/customer/orders/{{otherOrderNumber}}"
+        }
+      ]
+    },
+    {
+      "id": "view-dashboard",
+      "method": "GET",
+      "path": "/api/admin/overview",
+      "title": "อ่านข้อมูลหน้า ภาพรวมร้าน",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/overview"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/overview?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-product-new",
+      "method": "GET",
+      "path": "/api/admin/product-options",
+      "title": "อ่านข้อมูลหน้า เพิ่มสินค้า",
+      "role": "admin",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/product-options"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/product-options?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-product-delete",
+      "method": "GET",
+      "path": "/api/admin/products/:id/deletion",
+      "title": "อ่านข้อมูลหน้า ลบสินค้า",
+      "role": "admin",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/products/1/deletion"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/products/2/deletion"
+        }
+      ]
+    },
+    {
+      "id": "view-account-new",
+      "method": "GET",
+      "path": "/api/admin/account-options",
+      "title": "อ่านข้อมูลหน้า เพิ่มผู้ดูแล",
+      "role": "owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/account-options"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/account-options?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-account-delete",
+      "method": "GET",
+      "path": "/api/admin/accounts/:id/deletion",
+      "title": "อ่านข้อมูลหน้า ลบผู้ดูแล",
+      "role": "owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/accounts/1/deletion"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/accounts/2/deletion"
+        }
+      ]
+    },
+    {
+      "id": "view-category-new",
+      "method": "GET",
+      "path": "/api/admin/category-options",
+      "title": "อ่านข้อมูลหน้า เพิ่มหมวดหมู่",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/category-options"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/category-options?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-category-edit",
+      "method": "GET",
+      "path": "/api/admin/categories/:id",
+      "title": "อ่านข้อมูลหน้า แก้ไขหมวดหมู่",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories/1"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories/2"
+        }
+      ]
+    },
+    {
+      "id": "view-category-delete",
+      "method": "GET",
+      "path": "/api/admin/categories/:id/deletion",
+      "title": "อ่านข้อมูลหน้า ลบหมวดหมู่",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/categories/1/deletion"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/categories/2/deletion"
+        }
+      ]
+    },
+    {
+      "id": "view-admin-orders",
+      "method": "GET",
+      "path": "/api/admin/orders",
+      "title": "อ่านข้อมูลหน้า คำสั่งซื้อ",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/orders"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/orders?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-admin-order",
+      "method": "GET",
+      "path": "/api/admin/orders/:id",
+      "title": "อ่านข้อมูลหน้า รายละเอียดคำสั่งซื้อ",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/orders/1"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/orders/2"
+        }
+      ]
+    },
+    {
+      "id": "view-payments",
+      "method": "GET",
+      "path": "/api/admin/payments",
+      "title": "อ่านข้อมูลหน้า ตรวจสอบการชำระเงิน",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/payments"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/payments?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-customers",
+      "method": "GET",
+      "path": "/api/admin/customers",
+      "title": "อ่านข้อมูลหน้า ลูกค้า",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/customers"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/customers?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-messages",
+      "method": "GET",
+      "path": "/api/admin/messages",
+      "title": "อ่านข้อมูลหน้า ข้อความจากลูกค้า",
+      "role": "operations",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/messages"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/messages?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-settings",
+      "method": "GET",
+      "path": "/api/admin/settings",
+      "title": "อ่านข้อมูลหน้า ตั้งค่าร้าน",
+      "role": "owner",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/settings"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/settings?q=Buddy"
+        }
+      ]
+    },
+    {
+      "id": "view-admin-profile",
+      "method": "GET",
+      "path": "/api/admin/profile",
+      "title": "อ่านข้อมูลหน้า ข้อมูลของฉัน",
+      "role": "admin",
+      "examples": [
+        {
+          "label": "ตัวอย่าง A",
+          "url": "/api/admin/profile"
+        },
+        {
+          "label": "ตัวอย่าง B",
+          "url": "/api/admin/profile?q=Buddy"
+        }
+      ]
+    }
+  ]
+}

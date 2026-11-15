@@ -1,0 +1,2110 @@
+{
+  "info": {
+    "name": "sec2_gr8 BuddyGiftfy Phase II",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Use a disposable/demo database. This collection creates/deletes demo records and renames/moves a demo category before restoring its name. Login and CSRF cookies are managed automatically. Native MySQL is required."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    }
+  ],
+  "item": [
+    {
+      "name": "MySQL health",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Native MySQL\",()=>{pm.expect(result.database.version).not.to.include(\"MariaDB\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Session / CSRF example 1",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/session"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.environment.set(\"csrf\",result.session.csrf);pm.test(\"No session id or password hash exposed\",()=>{pm.expect(result.session.id).to.be.undefined;pm.expect(pm.response.text()).not.to.include(\"password_hash\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unauthenticated product search denied",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\",()=>pm.response.to.have.status(401));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Missing CSRF denied",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{ownerEmail}}\",\n  \"password\": \"{{ownerPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\",()=>pm.response.to.have.status(403));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication example 2: wrong password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"{{ownerEmail}}\",\n  \"password\": \"wrong-password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\",()=>pm.response.to.have.status(401));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Session / CSRF example 2",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/session"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.environment.set(\"csrf\",result.session.csrf);pm.test(\"No session id or password hash exposed\",()=>{pm.expect(result.session.id).to.be.undefined;pm.expect(pm.response.text()).not.to.include(\"password_hash\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication example 1: valid owner",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"{{ownerEmail}}\",\n  \"password\": \"{{ownerPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh rotated CSRF",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/session"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.environment.set(\"csrf\",result.session.csrf);pm.test(\"No session id or password hash exposed\",()=>{pm.expect(result.session.id).to.be.undefined;pm.expect(pm.response.text()).not.to.include(\"password_hash\");});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products search example 1: select all",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Product array\",()=>pm.expect(result.data.products).to.be.an(\"array\").that.is.not.empty);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products search example 2: combine 3 criteria",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products?q=Buddy&category=%E0%B8%95%E0%B8%B8%E0%B9%8A%E0%B8%81%E0%B8%95%E0%B8%B2&status=Available"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Combined filters\",()=>{pm.expect(result.data.products).to.have.length(1);pm.expect(result.data.products[0].name).to.equal(\"Buddy Bear\");});pm.environment.set(\"bearStock\",result.data.products[0].stock_quantity);pm.environment.set(\"bearPrice\",result.data.products[0].price);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product insert example A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman Gift A\",\n  \"category\": \"ตุ๊กตา\",\n  \"description\": \"Meaningful gift used for service verification\",\n  \"price\": \"250.50\",\n  \"stock_quantity\": \"7\",\n  \"image_url\": \"/images/product-placeholder.svg\",\n  \"status\": \"Available\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find inserted product A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products?q=Postman%20Gift%20A"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Inserted product exists\",()=>pm.expect(result.data.products).to.have.length(1));pm.environment.set(\"productAId\",result.data.products[0].product_id);pm.environment.set(\"productASku\",result.data.products[0].sku);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product view example A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Correct gift\",()=>pm.expect(result.data.product.name).to.equal(\"Postman Gift A\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product update example A",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman Gift A\",\n  \"category\": \"ตุ๊กตา\",\n  \"description\": \"Meaningful gift used for service verification\",\n  \"price\": \"399.25\",\n  \"stock_quantity\": \"12\",\n  \"image_url\": \"/images/product-placeholder.svg\",\n  \"status\": \"Available\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify product update A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Persisted values\",()=>{pm.expect(Number(result.data.product.price)).to.equal(399.25);pm.expect(result.data.product.stock_quantity).to.equal(12);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product delete confirmation rejected A",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_sku\": \"wrong\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product delete example A",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_sku\": \"{{productASku}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify product actually deleted A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product insert example B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman Gift B\",\n  \"category\": \"ตุ๊กตา\",\n  \"description\": \"Meaningful gift used for service verification\",\n  \"price\": \"250.50\",\n  \"stock_quantity\": \"7\",\n  \"image_url\": \"/images/product-placeholder.svg\",\n  \"status\": \"Available\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find inserted product B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products?q=Postman%20Gift%20B"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Inserted product exists\",()=>pm.expect(result.data.products).to.have.length(1));pm.environment.set(\"productBId\",result.data.products[0].product_id);pm.environment.set(\"productBSku\",result.data.products[0].sku);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product view example B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Correct gift\",()=>pm.expect(result.data.product.name).to.equal(\"Postman Gift B\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product update example B",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman Gift B\",\n  \"category\": \"ตุ๊กตา\",\n  \"description\": \"Meaningful gift used for service verification\",\n  \"price\": \"399.25\",\n  \"stock_quantity\": \"12\",\n  \"image_url\": \"/images/product-placeholder.svg\",\n  \"status\": \"Available\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify product update B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Persisted values\",()=>{pm.expect(Number(result.data.product.price)).to.equal(399.25);pm.expect(result.data.product.stock_quantity).to.equal(12);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product delete confirmation rejected B",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_sku\": \"wrong\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product delete example B",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_sku\": \"{{productBSku}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify product actually deleted B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/{{productBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin search example 1: select all",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Admin array\",()=>pm.expect(result.data.accounts).to.be.an(\"array\").that.is.not.empty);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin search example 2: combine 3 criteria",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts?q=Owner&role=Owner&status=Active"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Combined admin filters\",()=>pm.expect(result.data.accounts).to.have.length(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin insert example A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"postman-a@example.test\",\n  \"first_name\": \"Postman\",\n  \"last_name\": \"Editor A\",\n  \"role\": \"Editor\",\n  \"password\": \"{{ownerPassword}}\",\n  \"password_confirm\": \"{{ownerPassword}}\",\n  \"age\": \"20\",\n  \"address\": \"Test address, Bangkok\",\n  \"preferences\": \"Product catalog maintenance\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find inserted admin A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts?q=postman-a@example.test&role=Editor&status=Active"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Admin exists\",()=>pm.expect(result.data.accounts).to.have.length(1));pm.environment.set(\"adminAId\",result.data.accounts[0].admin_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin view example A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Meaningful profile\",()=>{pm.expect(result.data.account.email).to.equal(\"postman-a@example.test\");pm.expect(result.data.account.age).to.equal(20);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin update example A",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"postman-a@example.test\",\n  \"first_name\": \"Postman\",\n  \"last_name\": \"Editor A\",\n  \"role\": \"Manager\",\n  \"age\": \"21\",\n  \"address\": \"Test address, Bangkok\",\n  \"preferences\": \"Product catalog maintenance\",\n  \"status\": \"Active\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify admin update A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Persisted role and age\",()=>{pm.expect(result.data.account.role).to.equal(\"Manager\");pm.expect(result.data.account.age).to.equal(21);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin delete confirmation rejected A",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_email\": \"wrong@example.test\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin delete example A",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_email\": \"postman-a@example.test\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify admin actually deleted A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminAId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin insert example B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"postman-b@example.test\",\n  \"first_name\": \"Postman\",\n  \"last_name\": \"Editor B\",\n  \"role\": \"Editor\",\n  \"password\": \"{{ownerPassword}}\",\n  \"password_confirm\": \"{{ownerPassword}}\",\n  \"age\": \"20\",\n  \"address\": \"Test address, Bangkok\",\n  \"preferences\": \"Product catalog maintenance\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find inserted admin B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts?q=postman-b@example.test&role=Editor&status=Active"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Admin exists\",()=>pm.expect(result.data.accounts).to.have.length(1));pm.environment.set(\"adminBId\",result.data.accounts[0].admin_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin view example B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Meaningful profile\",()=>{pm.expect(result.data.account.email).to.equal(\"postman-b@example.test\");pm.expect(result.data.account.age).to.equal(20);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin update example B",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"email\": \"postman-b@example.test\",\n  \"first_name\": \"Postman\",\n  \"last_name\": \"Editor B\",\n  \"role\": \"Manager\",\n  \"age\": \"21\",\n  \"address\": \"Test address, Bangkok\",\n  \"preferences\": \"Product catalog maintenance\",\n  \"status\": \"Active\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify admin update B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Persisted role and age\",()=>{pm.expect(result.data.account.role).to.equal(\"Manager\");pm.expect(result.data.account.age).to.equal(21);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin delete confirmation rejected B",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_email\": \"wrong@example.test\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin delete example B",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_email\": \"postman-b@example.test\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify admin actually deleted B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/{{adminBId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\",()=>pm.response.to.have.status(404));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protect current/last owner",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/accounts/1",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"confirm_email\": \"{{ownerEmail}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\",()=>pm.response.to.have.status(400));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category insert A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/new",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman category A\",\n  \"sort_order\": \"10\",\n  \"is_custom\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category list A",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "const category=result.data.categories.find(c=>c.name===\"Postman category A\");pm.test(\"Category exists\",()=>pm.expect(category).to.be.ok);pm.environment.set(\"categoryAId\",category.category_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category update A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{categoryAId}}/edit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman category A edited\",\n  \"sort_order\": \"12\",\n  \"is_custom\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category delete A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{categoryAId}}/delete",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category insert B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/new",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman category B\",\n  \"sort_order\": \"10\",\n  \"is_custom\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category list B",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "const category=result.data.categories.find(c=>c.name===\"Postman category B\");pm.test(\"Category exists\",()=>pm.expect(category).to.be.ok);pm.environment.set(\"categoryBId\",category.category_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category update B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{categoryBId}}/edit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"Postman category B edited\",\n  \"sort_order\": \"12\",\n  \"is_custom\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category delete B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{categoryBId}}/delete",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find populated source category",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "const c=result.data.categories.find(c=>c.name===\"ตุ๊กตา\");pm.environment.set(\"sourceCategoryId\",c.category_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create category destination",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/new",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"หมวดปลายทางสำหรับทดสอบ\",\n  \"sort_order\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find category destination",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "const c=result.data.categories.find(c=>c.name===\"หมวดปลายทางสำหรับทดสอบ\");pm.environment.set(\"destinationCategoryId\",c.category_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rename populated category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{sourceCategoryId}}/edit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"ตุ๊กตาของขวัญ\",\n  \"sort_order\": \"2\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product category follows rename",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Renamed category persisted\",()=>pm.expect(result.data.product.category).to.equal(\"ตุ๊กตาของขวัญ\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Populated category cannot be deleted without destination",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{sourceCategoryId}}/delete",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\",()=>pm.response.to.have.status(409));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Move gifts and delete source category",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{sourceCategoryId}}/delete",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"destination_id\": \"{{destinationCategoryId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify moved product retains price and stock",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Gift preserved\",()=>{pm.expect(result.data.product.category).to.equal(\"หมวดปลายทางสำหรับทดสอบ\");pm.expect(Number(result.data.product.price)).to.equal(Number(pm.environment.get(\"bearPrice\")));pm.expect(result.data.product.stock_quantity).to.equal(Number(pm.environment.get(\"bearStock\")));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Populated destination remains protected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{destinationCategoryId}}/delete",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\",()=>pm.response.to.have.status(409));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restore original category after tests",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/categories/{{destinationCategoryId}}/edit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"_csrf\": \"{{csrf}}\",\n  \"name\": \"ตุ๊กตา\",\n  \"sort_order\": \"0\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify restored category",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/admin/products/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Original category restored\",()=>pm.expect(result.data.product.category).to.equal(\"ตุ๊กตา\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public service example 1: THB/USD",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://api.frankfurter.dev/v2/rate/thb/usd"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Live public rate\",()=>{pm.expect(result.base).to.equal(\"THB\");pm.expect(result.quote).to.equal(\"USD\");pm.expect(result.rate).to.be.above(0);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public service example 2: THB/EUR",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "https://api.frankfurter.dev/v2/rate/thb/eur"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\",()=>pm.response.to.have.status(200));",
+              "const result=pm.response.json();",
+              "pm.test(\"Live public rate\",()=>{pm.expect(result.quote).to.equal(\"EUR\");pm.expect(result.rate).to.be.above(0);});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
